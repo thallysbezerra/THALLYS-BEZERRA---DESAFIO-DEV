@@ -16,7 +16,7 @@ class App extends Component {
 
         <div>
 
-          <h1><Icon medium>local_library</Icon>Checkout</h1>
+          <h1><Icon medium>local_library</Icon>Book Store</h1>
 
           <div className="shoppingCart">
 
@@ -50,6 +50,7 @@ class App extends Component {
         </div>
 
         <div>
+          <Form/>
           <Checkout/>
         </div>
 

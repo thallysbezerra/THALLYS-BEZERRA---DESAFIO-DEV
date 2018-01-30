@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Input, Icon, Row, Tab, Tabs} from 'react-materialize'
+import {Collapsible, CollapsibleItem, Button, Col, Input, Icon, Row} from 'react-materialize'
 
 class Checkout extends Component {
   
@@ -31,30 +31,42 @@ class Checkout extends Component {
 
         <h2>Payment</h2>
         <p>Select the payment method.</p>
-        <Tabs className='paymentMethod z-depth-1'>
-          <Tab title={<div><Icon>credit_card</Icon><div>Credit Card</div></div>} tabWidth="6">
-          <Input s={12} label="Card number" maxlength="16" />
-          <Input s={12} label="Name on card" />
-          <Input s={6} label="Expiration date" placeholder="MM/YY" maxlength="5" />
-          <Input s={6} label="Security code" maxlength="3" />
-          </Tab>
-          <Tab title={<div><Icon>attach_money</Icon><div>Boleto (Valid only in Brazil)</div></div>} tabWidth="6">
-            Test 2
-          </Tab>
-        </Tabs>
+
+        <Row className="paymentMethod">
+          <Col s={6}>
+            <Collapsible>
+              <CollapsibleItem header='Credit Card' icon='credit_card'>
+              <Row>
+                <Input s={12} label="Card number" maxlength="16" />
+                <Input s={12} label="Name on card" />
+                <Input s={6} label="Expiration date" placeholder="MM/YY" maxlength="5" />
+                <Input s={6} label="Security code" placeholder="Three numbers behind the card" maxlength="3" />
+              </Row>
+            <Row>
+              <Button large className="right green" waves='light'>Confirm payment<Icon left>check</Icon></Button>
+            </Row>
+              </CollapsibleItem>
+            </Collapsible>
+          </Col>
+          <Col s={6}>
+            <Collapsible>
+              <CollapsibleItem header='Boleto (Valid only in Brazil)' icon='monetization_on'>
+              <Row>
+                <p>Must be paid within 5 business days.</p>
+                <Button large className="right green" waves='light'>Print<Icon left>print</Icon></Button>
+              </Row>
+              </CollapsibleItem>
+            </Collapsible>
+          </Col>
+        </Row>
        
         <style jsx>{`
         h2 {
           color: #26a69a;
           font-size: 38px;
         }
-        .paymentMethod,
-        .paymentMethod .tab {
-          height: auto;
-        }
-        .paymentMethod i {
-          display: block;
-          font-size: 5em;
+        .paymentMethod button {
+          width: 100%;
         }
         `}</style>
 
