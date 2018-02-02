@@ -11,12 +11,11 @@ class Form extends Component {
     this.state = {
       texto: undefined,
       data: null,
+      search: '',
+      cart: 0,
+      finalPrice: 0,
     }
     this.handleChange = this.handleChange.bind(this);
-  }
-
-  getInitialState() {
-    return {search: ''}
   }
 
   handleChange(event) {
@@ -25,18 +24,39 @@ class Form extends Component {
   }
 
   handleClick = (e) => {
-    e.preventDefault(); 
-    axios.get(`https://www.googleapis.com/books/v1/volumes?q=${this.state.texto}`)
-    .then((response) => {
-      this.setState({data: response.data});
-    })
+    e.preventDefault()
+    return this.state.texto
+    // e.preventDefault(); 
+    // axios.get(`https://www.googleapis.com/books/v1/volumes?q=${this.state.texto}`)
+    // .then((response) => {
+    //   this.setState({data: response.data});
+    //   console.log(response.data.items[3])
+    // })
+  }
+
+  renderImage = (e) => {
+    if(e.volumeInfo.imageLinks === undefined) {
+      return 'https://goo.gl/rDT6Q3'
+    } else {
+      return e.volumeInfo.imageLinks.thumbnail
+    }
+  }
+
+  renderPrice = (e) => {
+    if(e.saleInfo.listPrice === undefined) {
+      return 'without price'
+    } else {
+      return `R$ ${e.saleInfo.listPrice.amount}`
+    }
   }
 
   render() {
-    {console.log(this.state.data)}
     const { placeholder, buttonValue } = this.props;
     return (
         <div>
+           <div className="shoppingCart">
+
+          </div>
 
           <form>
             <Input name="search" value={this.state.email} label="Which book are you looking for?" value={this.state.value} onChange={ this.handleChange } required></Input>   
@@ -47,11 +67,13 @@ class Form extends Component {
             {
               this.state.data !== null &&  
                 this.state.data.items.map((e) => {
+                  console.log(e.volumeInfo.imageLinks === undefined)
                   return (
                     <BookList 
                       titulo={e.volumeInfo.title} 
                       descricao={e.volumeInfo.description} 
-                      image={e.volumeInfo.imageLinks.thumbnail}
+                      image={this.renderImage(e)}
+                      price={this.renderPrice(e)}
                     /> 
                   )
                 })

@@ -1,77 +1,99 @@
 import React, { Component } from 'react'
-import Form from './components/Form'
-import Checkout from './components/Checkout'
-import {Button, Icon, Modal, Table} from 'react-materialize'
+import axios from 'axios'
+import Payment from './components/Payment'
+import BookList from './components/BookList'
+import SignIn from './components/SignIn'
+import {Button, Card, CardTitle, Col, Icon, Input, Modal, Row, Table} from 'react-materialize'
 
 class App extends Component {
-  
   constructor() {
     super()
-    
+    this.state = {
+      texto: undefined,
+      data: null,
+      search: '',
+      cart: null,
+      totalPrice: null,
+    }
+    this.handleChange = this.handleChange.bind(this);
   }
+
+  handleChange(event) {
+    this.setState({texto: event.target.value});
+    this.setState({search: event.target.value})
+  }
+
+  handleClick = (e) => {
+    e.preventDefault(); 
+    axios.get(`https://www.googleapis.com/books/v1/volumes?q=${this.state.texto}`)
+    .then((response) => {
+      this.setState({data: response.data});
+    })
+  }
+
+  renderImage = (e) => {
+    if(e.volumeInfo.imageLinks === undefined) {
+      return 'https://fakeimg.pl/128x192/?text=No%20image'
+    } else {
+      return e.volumeInfo.imageLinks.thumbnail
+    }
+  }
+
+  renderPrice = (e) => {
+    if(e.saleInfo.listPrice === undefined) {
+      return <div className="outOfStock">Out of stock</div>
+    } else {
+      return `US$ ${e.saleInfo.listPrice.amount}`
+    }
+  } 
 
   render() {
     return (
       <div className="container">
-
         <div>
-
           <h1><Icon medium>local_library</Icon>Book Store</h1>
-
-          <div className="shoppingCart">
-
-            <Modal
-              header='Your shopping cart'
-              fixedFooter
-              trigger={<Button large waves='light'>Cart<Icon left>shopping_cart</Icon></Button>}>
-              
-              <Table>
-                <thead>
-                  <tr>
-                    <th data-field="title">Book</th>
-                    <th data-field="description">Description</th>
-                    <th data-field="price">Price</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td>Livro</td>
-                    <td>Descrição</td>
-                    <td>Preço</td>
-                  </tr>
-                </tbody>
-              </Table>
-
-            </Modal>
-
-          </div>
-
+          <Modal
+            fixedFooter
+            trigger={<Button large waves='light'>Sign in<Icon left>account_circle</Icon></Button>}
+            actions={<Button waves='light'>Create account<Icon left>check</Icon></Button>}
+          >
+          <SignIn></SignIn>
+          </Modal>
         </div>
 
         <div>
-          <Form/>
-          <Checkout/>
-        </div>
-
-        <style jsx>{`
-          h1 {
-            display: inline-block;
-            font-size: 58px;
-            margin-bottom: 100px;
-          }
-          h1 i {
-            color: #26a69a;
-            margin-right: 15px;
-          }
-          .shoppingCart {
-            float: right;
-            margin-top: 38px;
-          }
-        `}</style>
+          <form>
+            <Input name="search" value={this.state.email} label="Which book are you looking for?" value={this.state.value} onChange={ this.handleChange } required></Input>   
+            <Button floating large waves='light' icon='search' onClick={ this.handleClick } disabled={!this.state.search}  />
+          </form>
+            <Row>
+              {
+                this.state.data !== null &&  
+                  this.state.data.items.map((e) => {
+                    console.log(e.volumeInfo.imageLinks === undefined)
+                    return (
+                        <Col s={12} m={6} l={4}>
+                          <Card header={<CardTitle reveal image={this.renderImage(e)} waves='light' className="bookList"/>}
+                            title={e.volumeInfo.title}
+                            reveal={<p>{e.volumeInfo.description}</p>}>
+                            <div className="price">{this.renderPrice(e)}
+                            <Modal
+                              actions=''
+                              trigger={<Button large waves='light'>Order<Icon left>shopping_cart</Icon></Button>}
+                            >
+                            <Payment/>
+                            </Modal>
+                            </div>
+                          </Card>
+                      </Col>
+                    )
+                  })
+                }
+            </Row>
+        </div>   
 
       </div>
-    );
+    ); 
   }
 }
 
