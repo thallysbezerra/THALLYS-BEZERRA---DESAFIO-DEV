@@ -7,4 +7,4 @@ EBOOK
 4. Execute `npm install` on directory with project.
 5. Execute `npm start` on the same directory.
 
-> The projetct was developed using React library based on Create React App with React Materialize.
+> The project was developed using React library based on Create React App with React Materialize.
